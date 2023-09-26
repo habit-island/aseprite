@@ -17,7 +17,7 @@ endif()
 
 if(APPLE)
   #when cross compiling aseprite, make gen compiled as a universal binary.
-  set_target_properties(gen laf-base cfg-lib ${TINYXML_LIBRARY}
+  set_target_properties(gen laf-base cfg-lib tinyxml
     PROPERTIES OSX_ARCHITECTURES "x86_64;arm64")
 endif()
 
