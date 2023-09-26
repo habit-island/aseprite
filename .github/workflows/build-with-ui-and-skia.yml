@@ -52,10 +52,10 @@ jobs:
         else
           export enable_ccache=on
           export libskianame=libskia.a
-          if [[ "${{ runner.arch }}" == "x64" ]] ; then
+          if [[ "${{ matrix.arch }}" == "x64" ]] ; then
             export macos_cmake_arch_str="-DCMAKE_OSX_ARCHITECTURES=x86_64"
           else
-            export macos_cmake_arch_str="-DCMAKE_OSX_ARCHITECTURES=${{ runner.arch }}"
+            export macos_cmake_arch_str="-DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}"
           fi
         fi
         cmake -S . -B build -G Ninja \
