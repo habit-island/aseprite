@@ -16,9 +16,10 @@ if(MSVC)
 endif()
 
 if(APPLE)
-  #when cross compiling aseprite, make gen compiled for host arch.
-  target_compile_options(gen
-  PRIVATE -arch ${CMAKE_HOST_SYSTEM_PROCESSOR})
+  #when cross compiling aseprite, make gen compiled as a universal binary.
+  set_target_properties(
+    PROPERTIES OSX_ARCHITECTURES x86_64;arm64
+  )
 endif()
 
 target_link_libraries(gen
