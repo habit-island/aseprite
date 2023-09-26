@@ -15,6 +15,12 @@ if(MSVC)
     PROPERTIES LINK_FLAGS -ENTRY:"mainCRTStartup")
 endif()
 
+if(APPLE)
+  #when cross compiling aseprite, make gen compiled for host arch.
+  target_compile_options(gen
+  PRIVATE -arch ${CMAKE_HOST_SYSTEM_PROCESSOR})
+endif()
+
 target_link_libraries(gen
   laf-base
   cfg-lib
