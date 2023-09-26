@@ -8,11 +8,9 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest]
         build_type: [Release]
-        arch: [x64, x86, arm64]
+        arch: [x64, arm64]
         enable_ui: [on]
         exclude:
-          - os: macos-latest
-            arch: x86
           - os: windows-latest
             arch: arm64
     steps:
@@ -49,16 +47,20 @@ jobs:
       run: |
         if [[ "${{ runner.os }}" == "Windows" ]] ; then
           export enable_ccache=off
+          export libskianame=skia.lib
+          export macos_cmake_arch_str=""
         else
           export enable_ccache=on
-        fi
-        if [[ "${{ runner.os }}" == "Windows" ]] ; then
-          export libskianame=skia.lib
-        else
           export libskianame=libskia.a
+          if [[ "${{ runner.arch }}" == "x64" ]] ; then
+            export macos_cmake_arch_str="-DCMAKE_OSX_ARCHITECTURES=x86_64"
+          else
+            export macos_cmake_arch_str="-DCMAKE_OSX_ARCHITECTURES=${{ runner.arch }}"
+          fi
         fi
         cmake -S . -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          $macos_cmake_arch_str \
           -DLAF_BACKEND=skia \
           -DSKIA_DIR=skia \
           -DSKIA_LIBRARY_DIR=skia/out/${{ matrix.build_type }}-${{ matrix.arch }} \
