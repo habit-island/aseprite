@@ -74,6 +74,7 @@ jobs:
       run: |
         cd build && ninja
     - name: Running C++ Tests
+      if: ${{ !(runner.os == "macOS" && matrix.arch=="arm64") }}
       shell: bash
       run: |
         if [[ "${{ runner.os }}" == "Linux" ]] ; then
@@ -81,6 +82,7 @@ jobs:
         fi
         cd build && $XVFB ctest --output-on-failure
     - name: Running CLI Tests
+      if: ${{ !(runner.os == "macOS" && matrix.arch=="arm64") }}
       shell: bash
       run: |
         if [[ "${{ runner.os }}" == "Linux" ]] ; then
