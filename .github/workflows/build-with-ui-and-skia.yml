@@ -42,7 +42,7 @@ jobs:
     - name: Download Skia
       shell: bash
       run: |
-        curl -o skia.zip https://github.com/aseprite/skia/releases/latest/download/Skia-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}.zip
+        curl -o skia.zip -L https://github.com/aseprite/skia/releases/latest/download/Skia-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}.zip
         unzip skia.zip -d skia
     - name: Generating Makefiles
       shell: bash
