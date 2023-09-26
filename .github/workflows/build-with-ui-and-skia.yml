@@ -1,0 +1,94 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+        build_type: [Release]
+        arch: [x64, x86, arm64]
+        enable_ui: [on]
+        exclude:
+          - os: macos-latest
+            arch: x86
+          - os: windows-latest
+            arch: arm64
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1
+      if: ${{ runner.os == 'Linux' || runner.os == 'macOS' }}
+      with:
+        key: ${{ matrix.os }}-${{ matrix.enable_ui }}-${{ matrix.build_type }}
+    - uses: turtlesec-no/get-ninja@main
+    - uses: ilammy/msvc-dev-cmd@v1
+      if: runner.os == 'Windows'
+    - name: Workaround for windows-2022 and cmake 3.25.0
+      if: runner.os == 'Windows'
+      shell: bash
+      run: rm -rf C:/Strawberry/
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Linux" ]] ; then
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            libx11-dev libxcursor-dev libxi-dev
+        fi
+    - name: Download Skia
+      shell: bash
+      run: |
+        curl -o skia.zip https://github.com/aseprite/skia/releases/latest/download/Skia-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}.zip
+        unzip skia.zip -d skia
+    - name: Generating Makefiles
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]] ; then
+          export enable_ccache=off
+        else
+          export enable_ccache=on
+        fi
+        if [[ "${{ runner.os }}" == "Windows" ]] ; then
+          export libext=lib
+        else
+          export libext=a
+        fi
+        cmake -S . -B build -G Ninja \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DLAF_BACKEND=skia \
+          -DSKIA_DIR=skia \
+          -DSKIA_LIBRARY_DIR=skia\out\${{ matrix.build_type }}-${{ matrix.arch }} \
+          -DSKIA_LIBRARY=skia\out\${{ matrix.build_type }}-${{ matrix.arch }}\skia.$libext \
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
+          -DENABLE_TESTS=ON \
+          -DENABLE_UI=${{ matrix.enable_ui }} \
+          -DENABLE_CCACHE=$enable_ccache
+    - name: Compiling
+      shell: bash
+      run: |
+        cd build && ninja
+    - name: Running C++ Tests
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Linux" ]] ; then
+          export XVFB=xvfb-run
+        fi
+        cd build && $XVFB ctest --output-on-failure
+    - name: Running CLI Tests
+      shell: bash
+      run: |
+        if [[ "${{ runner.os }}" == "Linux" ]] ; then
+          export XVFB=xvfb-run
+        fi
+        export ASEPRITE=$PWD/build/bin/aseprite
+        cd tests
+        $XVFB bash run-tests.sh
+    - name: Uploading Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: Aseprite-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}
+        path: build
