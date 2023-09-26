@@ -1,5 +1,5 @@
 name: build-with-ui-and-skia
-on: [push, pull_request]
+on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -53,16 +53,16 @@ jobs:
           export enable_ccache=on
         fi
         if [[ "${{ runner.os }}" == "Windows" ]] ; then
-          export libext=lib
+          export libskianame=skia.lib
         else
-          export libext=a
+          export libskianame=libskia.a
         fi
         cmake -S . -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DLAF_BACKEND=skia \
           -DSKIA_DIR=skia \
           -DSKIA_LIBRARY_DIR=skia/out/${{ matrix.build_type }}-${{ matrix.arch }} \
-          -DSKIA_LIBRARY=skia/out/${{ matrix.build_type }}-${{ matrix.arch }}/skia.$libext \
+          -DSKIA_LIBRARY=skia/out/${{ matrix.build_type }}-${{ matrix.arch }}/$libskianame \
           -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
           -DENABLE_TESTS=ON \
           -DENABLE_UI=${{ matrix.enable_ui }} \
