@@ -95,4 +95,6 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: Aseprite-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}
-        path: build
+        path: |
+          build/aseprite*
+          build/data
