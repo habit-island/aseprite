@@ -22,7 +22,7 @@ jobs:
     - name: Run sccache-cache
       uses: mozilla-actions/sccache-action@v0.0.3
       with:
-        key: ${{ name }}-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.build_type }}-${{ matrix.enable_ui }}
+        key: sccache-withui-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.build_type }}-${{ matrix.enable_ui }}
     - uses: turtlesec-no/get-ninja@main
     - uses: ilammy/msvc-dev-cmd@v1
       if: runner.os == 'Windows'
