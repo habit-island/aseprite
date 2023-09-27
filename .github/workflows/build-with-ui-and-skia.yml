@@ -1,5 +1,7 @@
 name: build-with-ui-and-skia
 on: [push, workflow_dispatch]
+env:
+  SCCACHE_GHA_ENABLED: "true"
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -19,6 +21,8 @@ jobs:
         submodules: 'recursive'
     - name: Run sccache-cache
       uses: mozilla-actions/sccache-action@v0.0.3
+      with:
+        key: ${{ name }}-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.build_type }}-${{ matrix.enable_ui }}
     - uses: turtlesec-no/get-ninja@main
     - uses: ilammy/msvc-dev-cmd@v1
       if: runner.os == 'Windows'
@@ -41,8 +45,6 @@ jobs:
         unzip skia.zip -d skia
     - name: Generating Makefiles
       shell: bash
-      env:
-        SCCACHE_GHA_ENABLED: "true"
       run: |
         if [[ "${{ runner.os }}" == "Windows" ]] ; then
           export libskianame=skia.lib
