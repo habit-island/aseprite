@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
-        build_type: [Release]
+        build_type: [Release, Debug]
         arch: [x64, arm64]
         enable_ui: [on]
         exclude:
@@ -44,6 +44,7 @@ jobs:
     - name: Generating Makefiles
       shell: bash
       run: |
+        export SCCACHE_C_CUSTOM_CACHE_BUSTER=${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.enable_ui }}
         if [[ "${{ runner.os }}" == "Windows" ]] ; then
           export libskianame=skia.lib
           export macos_cmake_arch_str=""
