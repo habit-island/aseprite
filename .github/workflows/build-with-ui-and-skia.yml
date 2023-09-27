@@ -39,12 +39,12 @@ jobs:
     - name: Download Skia
       shell: bash
       run: |
-        curl -o skia.zip -L https://github.com/aseprite/skia/releases/latest/download/Skia-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.arch }}.zip
+        curl -o skia.zip -L https://github.com/aseprite/skia/releases/latest/download/Skia-${{ runner.os }}-Release-${{ matrix.arch }}.zip
         unzip skia.zip -d skia
     - name: Generating Makefiles
       shell: bash
       run: |
-        echo "SCCACHE_C_CUSTOM_CACHE_BUSTER=${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.enable_ui }}" >> $GITHUB_ENV
+        echo "SCCACHE_C_CUSTOM_CACHE_BUSTER=${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.enable_ui }}" >> "$GITHUB_ENV"
         if [[ "${{ runner.os }}" == "Windows" ]] ; then
           export libskianame=skia.lib
           export macos_cmake_arch_str=""
