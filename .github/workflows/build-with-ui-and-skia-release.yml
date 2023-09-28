@@ -1,4 +1,4 @@
-name: build-with-ui-and-skia
+name: build-with-ui-and-skia-release
 on: [push, workflow_dispatch]
 env:
   SCCACHE_GHA_ENABLED: "true"
@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
-        build_type: [Release, Debug]
+        build_type: [Release]
         arch: [x64, arm64]
         enable_ui: [on]
         exclude:
@@ -67,9 +67,7 @@ jobs:
           -DENABLE_UI=${{ matrix.enable_ui }} \
           -DENABLE_CCACHE=off \
           -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-          -DCMAKE_POLICY_DEFAULT_CMP0141=NEW \
-          -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
+          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
     - name: Compiling
       shell: bash
       run: |
