@@ -67,7 +67,8 @@ jobs:
           -DENABLE_UI=${{ matrix.enable_ui }} \
           -DENABLE_CCACHE=off \
           -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+          -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+          -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
     - name: Compiling
       shell: bash
       run: |
