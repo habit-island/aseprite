@@ -1,4 +1,4 @@
-name: build-with-ui-and-skia-release
+name: build-with-ui-and-skia-debug
 on: [push, workflow_dispatch]
 jobs:
   build:
