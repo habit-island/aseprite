@@ -68,6 +68,7 @@ jobs:
           -DENABLE_CCACHE=off \
           -DCMAKE_C_COMPILER_LAUNCHER=sccache \
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+          -DCMAKE_POLICY_DEFAULT_CMP0141=NEW \
           -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded
     - name: Compiling
       shell: bash
