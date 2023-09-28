@@ -44,7 +44,6 @@ jobs:
     - name: Generating Makefiles
       shell: bash
       run: |
-        echo "SCCACHE_C_CUSTOM_CACHE_BUSTER=${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.enable_ui }}" >> "$GITHUB_ENV"
         if [[ "${{ runner.os }}" == "Windows" ]] ; then
           export libskianame=skia.lib
           export macos_cmake_arch_str=""
@@ -72,6 +71,7 @@ jobs:
     - name: Compiling
       shell: bash
       run: |
+        export SCCACHE_C_CUSTOM_CACHE_BUSTER=${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.enable_ui }}
         cd build && ninja
     - name: Running C++ Tests
       if: ${{ !(runner.os == 'macOS' && matrix.arch == 'arm64') }}
